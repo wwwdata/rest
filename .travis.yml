@@ -4,7 +4,10 @@ node_js:
 - '0.10'
 - '0.8'
 - '0.6'
-script: npm run-script ci
+matrix:
+  include:
+    - node_js: '0.10'
+      script: npm run-script sauceme
 env:
   global:
   - BUSTER_TEST_OPT="--reporter specification"
