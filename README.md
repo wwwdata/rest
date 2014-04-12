@@ -45,12 +45,11 @@ The response should look familiar as well, it contains all the fields you would 
 If you paid attention when executing the previous example, you may have noticed that the response.entity is a string.  Often we work with more complex data types.  For this, rest.js supports a rich set of [MIME type conversions](docs/mime.md) with the [MIME Interceptor](docs/interceptors.md#module-rest/interceptor/mime).  The correct converter will automatically be chosen based on the `Content-Type` response header.  Custom converts can be registered for a MIME type, more on that later...
 
 ```javascript
-var rest, mime, client;
+var rest, client;
 
-rest = require('rest'),
-mime = require('rest/interceptor/mime');
+rest = require('rest');
 
-client = rest.wrap(mime);
+client = rest.wrap('rest/interceptor/mime');
 client({ path: '/data.json' }).then(function(response) {
     console.log('response: ', response);
 });
@@ -62,14 +61,12 @@ Before an interceptor can be used, it needs to be configured.  In this case, we 
 ### Composing Interceptors: ###
 
 ```javascript
-var rest, mime, errorCode, client;
+var rest, client;
 
-rest = require('rest'),
-mime = require('rest/interceptor/mime');
-errorCode = require('rest/interceptor/errorCode');
+rest = require('rest');
 
-client = rest.wrap(mime)
-             .wrap(errorCode, { code: 500 });
+client = rest.wrap('rest/interceptor/mime')
+             .wrap('rest/interceptor/errorCode', { code: 500 });
 client({ path: '/data.json' }).then(
     function(response) {
         console.log('response: ', response);
@@ -230,6 +227,7 @@ Change Log
 ----------
 
 .next
+- clients may be wrapped with an interceptor's module ID instead of the actual interceptor
 - bump when.js version to ~3, 2.x is no longer supported
 - perfer `client.wrap()` to `client.chain()`, `chain` is now deprecated
 - add HTTP specific methods to the promises returned from clients: .entity(), .status(), .headers(), .header(name)

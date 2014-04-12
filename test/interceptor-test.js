@@ -42,13 +42,16 @@
 		}
 
 		buster.testCase('rest/interceptor', {
-			'should set the originator client on the request for the, but do not overwrite': function () {
+			'should set the originator client on the request, but do not overwrite': function () {
 				var theInterceptor, client;
 				theInterceptor = interceptor();
 				client = theInterceptor(defaultClient).wrap(theInterceptor);
 				return client().then(function (response) {
 					assert.same('default', response.id);
-					assert.same(client, response.request.originator);
+					return response.request.originator().then(function (res) {
+						assert.same('default', response.id);
+						assert.same(res.request.originator, response.request.originator);
+					});
 				}).otherwise(fail);
 			},
 			'should use the client configured into the interceptor by default': function () {

@@ -69,7 +69,7 @@ client = pathPrefix(client, { prefix: 'http://example.com' });
 This example is much more clear.  The configuration is now related to it's interceptor.  However, it's a bit difficult to follow the `client` var.  If we forget to provide the parent client to the next interceptor in the chain, the chain is broken and reset with the default client.
 
 ```javascript
-// here we go
+// better still, but can be improved
 rest = require('rest');
 pathPrefix = require('rest/interceptor/pathPrefix');
 errorCode = require('rest/interceptor/errorCode');
@@ -80,7 +80,20 @@ client = rest.wrap(mime)
              .wrap(pathPrefix, { prefix: 'http://example.com' });
 ```
 
-In this last example, we're no longer redefining the `client` var, there's no confusion about what the `client` does and we can't forget to pass it along.  It's clearly the combination of the default client, and the mime, errorCode and pathPrefix interceptors.  The configuration for each interceptor is still directly linked with the interceptor.
+In this example, we're no longer redefining the `client` var, there's no confusion about what the `client` does and we can't forget to pass it along.  It's clearly the combination of the default client, and the mime, errorCode and pathPrefix interceptors.  The configuration for each interceptor is still directly linked with the interceptor. It can still be imporved.
+
+```javascript
+// here we go
+rest = require('rest');
+
+client = rest.wrap('rest/interceptor/mime')
+             .wrap('rest/interceptor/errorCode', { code: 500 })
+             .wrap('rest/interceptor/pathPrefix', { prefix: 'http://example.com' });
+```
+
+In this last example, we no longer need to require in each interceptor manually. We can simply specify the module ID for the interceptor and rest.js will load the interceptor implementation for us.
+
+**NOTE:** There is one downside to this approach. Tools that attempt to resolve the module dependency graph, such as [r.js](http://requirejs.org/docs/optimization.html) or cujoJS [cram.js](https://github.com/cujojs/cram), will not resolve the interceptors unless they are explicitly required somewhere within the application.
 
 It's important to consider the order that interceptors are applied, as some interceptors are more ideal near the root of the chain, while others are better being last.  The request phase of the interceptors is applied from the last chained to the root, while the response phase flows in the opposite direction.
 

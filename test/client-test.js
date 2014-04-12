@@ -17,7 +17,7 @@
 
 	define('rest/client-test', function (require) {
 
-		var client, rest, interceptor, defaultClient, skippableClient, defaultInterceptor;
+		var client, rest, interceptor, defaultClient, skippableClient, defaultInterceptor, defaultEntity;
 
 		client = require('rest/client');
 		rest = require('rest');
@@ -25,8 +25,9 @@
 
 		buster.testCase('rest/client', {
 			'setUp': function () {
+				defaultEntity = {};
 				defaultClient = client(function (request) {
-					return { request: request, id: 'default' };
+					return { request: request, id: 'default', entity: defaultEntity };
 				});
 				skippableClient = client(function (request) {
 					return { request: request, id: 'default' };
@@ -47,6 +48,12 @@
 			'should return the next client in the chain': function () {
 				assert.same(rest, skippableClient.skip());
 				refute(defaultClient.skip);
+			},
+			'should wrap the client with an interceptor based on an module id': function () {
+				var client = defaultClient.wrap('rest/interceptor/entity');
+				return client().then(function (response) {
+					assert.same(response, defaultEntity);
+				}).otherwise(fail);
 			}
 		});
 

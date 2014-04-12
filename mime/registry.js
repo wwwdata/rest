@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 the original author or authors
+ * Copyright 2012-2014 the original author or authors
  * @license MIT, see LICENSE.txt for details
  *
  * @author Scott Andrews
@@ -10,8 +10,9 @@
 
 	define(function (require) {
 
-		var when, registry;
+		var loader, when, registry;
 
+		loader = require('../util/loader');
 		when = require('when');
 
 		function normalizeMime(mime) {
@@ -22,17 +23,15 @@
 		function Registry(parent) {
 			var mimes = {};
 
-			if (typeof parent === 'function') {
+			if (typeof parent === 'undefined') {
 				// coerce a lookup function into the registry API
-				parent = (function (lookup) {
-					return {
-						lookup: function (mime) {
-							// cache to avoid duplicate lookups
-							mimes[mime] = lookup(mime);
-							return mimes[mime];
-						}
-					};
-				}(parent));
+				parent = {
+					lookup: function (mime) {
+						// cache to avoid duplicate lookups
+						mimes[mime] = loader('./type/' + mime, require);
+						return mimes[mime];
+					}
+				};
 			}
 
 			/**
@@ -75,34 +74,7 @@
 
 		};
 
-		function loadAMD(mime) {
-			var timeout;
-
-			return when.promise(function (resolve, reject) {
-
-				// HOPE reject on a local require would be nice
-				timeout = setTimeout(reject, 1000);
-				require(['./type/' + mime], resolve, reject);
-
-			}).otherwise(function (ex) {
-				return when.reject(ex || new Error('Timeout while loading mime module: ' + mime));
-			}).ensure(function () {
-				clearTimeout(timeout);
-			});
-		}
-
-		function loadNode(mime) {
-			return when.promise(function (resolve, reject) {
-				try {
-					resolve(require('./type/' + mime));
-				}
-				catch (e) {
-					reject(e);
-				}
-			});
-		}
-
-		registry = new Registry(typeof define === 'function' && define.amd ? loadAMD : loadNode);
+		registry = new Registry();
 
 		// include text/plain and application/json by default
 		registry.register('text/plain', require('./type/text/plain'));

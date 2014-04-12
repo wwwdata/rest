@@ -84,7 +84,7 @@ $plugins: [{ module: 'rest/wire' }]
 <a name="wire-client-resolver"></a>
 ### 'client!' Reference Resolver
 
-The client! reference resolver installs several commonly used interceptors, wrapping the default client. In order, the interceptors installed are the \'errorCode', \'mime', \'entity' and \'pathPrefix'. Basic options are configurable. It is intended as a quick and dirty way to get a functional client quickly. In most cases, the \'rest' factory will be more useful.
+The client! reference resolver installs several commonly used interceptors, wrapping the default client. In order, the interceptors installed are the \'rest/interceptor/errorCode', \'rest/interceptor/mime', \'rest/interceptor/entity' and \'rest/interceptor/pathPrefix'. Basic options are configurable. It is intended as a quick and dirty way to get a functional client quickly. In most cases, the \'rest' factory will be more useful.
 
 <table>
 <tr>
@@ -136,10 +136,10 @@ client: {
 Is equivlent to:
 
 ```javascript
-client = rest.wrap(errorCode, { code: 400 })
-             .wrap(mime, { mime: 'application/x-www-form-urlencoded' })
-             .wrap(entity)
-             .wrap(pathPrefix, { prefix: '' });
+client = rest.wrap('rest/interceptor/errorCode', { code: 400 })
+             .wrap('rest/interceptor/mime', { mime: 'application/x-www-form-urlencoded' })
+             .wrap('rest/interceptor/entity')
+             .wrap('rest/interceptor/pathPrefix', { prefix: '' });
 ```
 
 To disable interceptors, provide a boolean false for the config value
@@ -153,7 +153,7 @@ client: {
 Is equivlent to:
 
 ```javascript
-client = rest.wrap(pathPrefix, { prefix: '' });
+client = rest.wrap('rest/interceptor/pathPrefix', { prefix: '' });
 ```
 
 A custom client can be used instead of the default client
@@ -167,10 +167,10 @@ client: {
 Is equivlent to:
 
 ```javascript
-client = someOtherClient.wrap(errorCode, { code: 400 })
-                        .wrap(mime, { mime: 'application/x-www-form-urlencoded' })
-                        .wrap(entity)
-                        .wrap(pathPrefix, { prefix: '' });
+client = someOtherClient.wrap('rest/interceptor/errorCode', { code: 400 })
+                        .wrap('rest/interceptor/mime', { mime: 'application/x-www-form-urlencoded' })
+                        .wrap('rest/interceptor/entity')
+                        .wrap('rest/interceptor/pathPrefix', { prefix: '' });
 ```
 
 A [Dojo Store](dojo.md#dojo-stores) variant of the `client!` reference resolver is available as `resource!` from [`rest/dojo/wire`](dojo.md#module-rest/dojo/wire).

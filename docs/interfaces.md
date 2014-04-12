@@ -131,7 +131,7 @@ Interceptors and clients may define additional properties.
   <td>wrap</td>
   <td>interceptor, config (optional)</td>
   <td>Client</td>
-  <td>wraps the client with an interceptor returning the resulting client</td>
+  <td>wraps the client with an interceptor returning the resulting client. The interceptor may either be an actual interceptor, or a string containing the module ID that contains the interceptor.</td>
 </tr>
 </table>
 

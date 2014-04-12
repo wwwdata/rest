@@ -8,7 +8,12 @@
 (function (define) {
 	'use strict';
 
-	define(function (/* require */) {
+	define(function (require) {
+
+		var loader, when;
+
+		loader = require('./util/loader');
+		when = require('when');
 
 		/**
 		 * Add common helper methods to a client impl
@@ -33,12 +38,25 @@
 			/**
 			 * Allow a client to easily be wrapped by an interceptor
 			 *
-			 * @param {Interceptor} interceptor the interceptor to wrap this client with
+			 * @param {Interceptor|string} interceptor either the interceptor,
+			 *   or module ID for the interceptor, to wrap this client with
 			 * @param [config] configuration for the interceptor
 			 * @returns {Client} the newly wrapped client
 			 */
 			impl.wrap = function wrap(interceptor, config) {
-				return interceptor(impl, config);
+				if (typeof interceptor !== 'string') {
+					return interceptor(impl, config);
+				}
+				var client = loader(interceptor, require).then(function (interceptor) {
+					return interceptor(impl, config);
+				});
+				return function () {
+					var ctx = this,
+					    args = arguments;
+					return client.then(function (client) {
+						return client.apply(ctx, args);
+					});
+				};
 			};
 
 			/**
