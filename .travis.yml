@@ -1,13 +1,20 @@
 ---
 language: node_js
-node_js:
-- '0.10'
-- '0.8'
-- '0.6'
-before_install: npm config set ca ""
-script: npm run-script ci
+before_install: npm config set ca ''
 env:
   global:
-  - BUSTER_TEST_OPT="--reporter specification"
+  - BUSTER_TEST_OPT='--reporter specification'
   - SAUCE_USERNAME=cujojs-rest
-  - secure: "WaOqXhResNiTSfK29NHdRsgckcl/ec5Qp04Vc2ny0WmUT/9t9lIb13fCnSds\n5vuYXi4yCLnue1q03jy4ggLGr74118P5JsaRjG7V4ua0TrAoBZsnsEOvDF3V\nm7jh62SMeXvV0LnhfEvr6D2hmjkUQDN5KTKr9YK0qZgDj78aj1U="
+  - SAUCE_ACCESS_KEY='083602fa-1a26-4c55-af2a-9d64a27f546e'
+matrix:
+  include:
+    - node_js: '0.10'
+      script: 'npm run-script lint'
+    - node_js: '0.10'
+      script: 'npm run-script sauceme'
+    - node_js: '0.10'
+      script: 'npm run-script buster'
+    - node_js: '0.8'
+      script: 'npm run-script buster'
+    - node_js: '0.6'
+      script: 'npm run-script buster'
