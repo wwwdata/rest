@@ -31,8 +31,9 @@
 			"web": "http://unscriptable.com"
 		}
 	],
+	"registry": "jspm",
 	"dependencies": {
-		"when": "~3"
+		"when": "^3"
 	},
 	"devDependencies": {
 		"wire": "~0.9",
@@ -47,5 +48,9 @@
 		"ci": "npm test && sauceme -b test/browsers.json",
 		"start": "buster static -e browser",
 		"tunnel": "sauceme -m"
-	}
+	},
+	"ignore": [
+		"docs",
+		"test"
+	]
 }
